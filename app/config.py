@@ -12,6 +12,10 @@ MODEL = os.getenv("MODEL", "openai/gpt-oss-20b")
 REASONING_EFFORT = os.getenv("REASONING_EFFORT", "low")  # low | medium | high
 LLM_MAX_WAITS = 4  # how many times we wait + retry after a rate-limit (429) error
 
+# How long each team agent thinks (low | medium | high). More thinking = more tokens + time.
+# All start equal to the baseline, so the comparison is fair. Change ONE at a time in Stage 3.
+AGENT_EFFORT = {name: REASONING_EFFORT for name in ("planner", "coder", "reviewer", "explainer")}
+
 # Price in USD per 1M tokens: (input, output). From Groq's pricing page.
 PRICES = {
     "openai/gpt-oss-20b": (0.075, 0.30),
