@@ -1,3 +1,4 @@
+
 """The ONLY file that talks to the AI provider. To switch provider, edit only this file."""
 
 import re
@@ -88,8 +89,10 @@ def chat(messages, tracker=None, max_tokens=3000, reasoning_effort=None):
 
 
 def extract_code(reply):
+    """Remove Python or JSON Markdown fences when present."""
+
     match = re.search(
-        r"```(?:python)?\s*\n(.*?)```",
+        r"```(?:python|json)?\s*\n(.*?)```",
         reply,
         re.DOTALL,
     )
