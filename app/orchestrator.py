@@ -1,3 +1,4 @@
+
 """Orchestrator: coordinates Planner, Coder, Reviewer and Explainer."""
 
 import time
@@ -39,7 +40,6 @@ def analyze(question, csv_path):
 
     # 2. Coder + Reviewer loop.
     code = coder.write_code(question, summary, plan, tracker)
-    fix = None
     outcome = None
 
     for attempt in range(MAX_REVIEW_ATTEMPTS):
@@ -86,11 +86,11 @@ def analyze(question, csv_path):
         if review["verdict"] == "ok" and outcome["ok"]:
             break
 
-        # Stop if the Reviewer has used all allowed attempts.
+        # Stop after all three review attempts have been used.
         if attempt == MAX_REVIEW_ATTEMPTS - 1:
             return {
                 "ok": False,
-                "status": "review_failed",
+                "status": "not_sure",
                 "answer": NOT_SURE,
                 "code": code,
                 "error": review["feedback"] or outcome.get("error", ""),
