@@ -121,9 +121,14 @@ def run_code(code, csv_path):
             )
 
         if proc.returncode != 0:
-            return _fail(
-                stderr[-1500:] or "The code failed without an error message."
-            )
+            error = stderr[-1500:] or "The code failed without an error message."
+
+            # Preserve the signal expected by the baseline.
+            if "CANNOT_ANSWER:" in error:
+                signal = error[error.rfind("CANNOT_ANSWER:"):].splitlines()[0]
+                error = error.rstrip() + "\n" + signal
+
+            return _fail(error)
 
         result_file = _regular_file(os.path.join(out_dir, "result.json"))
         if result_file is None:
