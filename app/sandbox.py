@@ -1,67 +1,158 @@
-"""!!! UNSAFE - STAGE 1 ONLY !!!
-This is NOT a real sandbox. A list of blocked words is easy to bypass, and the code can
-still read files on this computer. Never run it with private data or on a public server.
-Stage 3 replaces the inside of run_code() with Docker. The function signature stays the same.
+"""Safe sandbox: runs generated code inside a locked-down Docker container.
 
-This is the ONLY file that runs generated code."""
+Generated code runs inside Docker, not directly on your Mac.
+The public interface remains run_code(code, csv_path).
+"""
 import json
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
 import uuid
 
 from app import config
 
-# Weak protection: refuse code that contains these words
-BLOCKED = ["import os", "from os", "import sys", "from sys", "import subprocess", "import shutil",
-           "import socket", "import requests", "__import__", "open(", "eval(", "exec(",
-           "compile(", "input("]
-
-RUNNER = os.path.join(config.ROOT, "sandbox", "runner.py")
+CONTAINER_PREFIX = "sandbox_run_"
+MAX_CHART_BYTES = 5_000_000
 
 
 def _fail(message):
     return {"ok": False, "result": "", "chart_path": None, "error": message}
 
 
-def run_code(code, csv_path):
-    """Run code on the CSV. Returns {ok, result, chart_path, error}."""
-    for word in BLOCKED:
-        if word in code:
-            return _fail(f"Blocked: the code contains '{word}', which is not allowed.")
+def _regular_file(path):
+    """Accept only normal files, never symlinks."""
+    if os.path.islink(path) or not os.path.isfile(path):
+        return None
+    return path
 
-    work = tempfile.mkdtemp(prefix="sandbox_")  # fresh empty folder for this run
+
+def _remove_container(docker, name):
+    """Force-remove the container, including after a timeout."""
     try:
-        code_path = os.path.join(work, "generated_code.py")
-        with open(code_path, "w", encoding="utf-8") as f:
+        subprocess.run(
+            [docker, "rm", "-f", name],
+            capture_output=True,
+            timeout=30,
+        )
+    except Exception:
+        pass
+
+
+def run_code(code, csv_path):
+    """Run generated code in Docker. Return {ok, result, chart_path, error}."""
+    docker = shutil.which("docker")
+    if docker is None:
+        return _fail("Docker was not found. Install Docker Desktop and start it.")
+
+    name = CONTAINER_PREFIX + uuid.uuid4().hex[:12]
+    work = os.path.realpath(tempfile.mkdtemp(prefix="sandbox_"))
+
+    try:
+        in_dir = os.path.join(work, "in")
+        out_dir = os.path.join(work, "out")
+        os.mkdir(in_dir)
+        os.mkdir(out_dir)
+
+        os.chmod(work, 0o755)
+        os.chmod(in_dir, 0o755)
+        os.chmod(out_dir, 0o777)
+
+        try:
+            shutil.copyfile(csv_path, os.path.join(in_dir, "input.csv"))
+        except OSError as exc:
+            return _fail(f"Could not copy the CSV into the sandbox: {exc}")
+
+        with open(
+            os.path.join(in_dir, "generated_code.py"),
+            "w",
+            encoding="utf-8",
+        ) as f:
             f.write(code)
 
-        # Do not pass the API key to the child process
-        env = {k: v for k, v in os.environ.items() if k != "GROQ_API_KEY"}
+        cmd = [
+            docker, "run",
+            "--name", name,
+            "--pull", "never",
+            "--network", "none",
+            "--memory", config.SANDBOX_MEMORY,
+            "--memory-swap", config.SANDBOX_MEMORY,
+            "--cpus", config.SANDBOX_CPUS,
+            "--pids-limit", str(config.SANDBOX_MAX_PROCESSES),
+            "--ulimit",
+            f"fsize={config.SANDBOX_MAX_FILE_BYTES}:{config.SANDBOX_MAX_FILE_BYTES}",
+            "--read-only",
+            "--tmpfs", "/tmp:rw,noexec,nosuid,size=64m",
+            "--cap-drop", "ALL",
+            "--security-opt", "no-new-privileges",
+            "--user", "10001:10001",
+            "-w", "/out",
+            "-v", f"{in_dir}:/in:ro",
+            "-v", f"{out_dir}:/out",
+            config.SANDBOX_IMAGE,
+            "/in/input.csv", "/in/generated_code.py",
+        ]
+
         try:
             proc = subprocess.run(
-                [sys.executable, RUNNER, os.path.abspath(csv_path), code_path],
-                cwd=work, capture_output=True, text=True,
-                timeout=config.SANDBOX_TIMEOUT_SEC, env=env,
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=config.SANDBOX_TIMEOUT_SEC,
             )
         except subprocess.TimeoutExpired:
-            return _fail(f"The code ran longer than {config.SANDBOX_TIMEOUT_SEC} seconds and was stopped.")
+            return _fail(
+                f"The code ran longer than {config.SANDBOX_TIMEOUT_SEC} "
+                "seconds and was stopped."
+            )
+
+        stderr = (proc.stderr or "").strip()
+
+        if proc.returncode in (125, 126, 127):
+            return _fail(
+                "The sandbox could not start. Is Docker running and is the "
+                "image built? Details: " + stderr[-500:]
+            )
+
+        if proc.returncode == 137 and not stderr:
+            return _fail(
+                f"The code was killed, most likely because it exceeded "
+                f"{config.SANDBOX_MEMORY} of memory."
+            )
 
         if proc.returncode != 0:
-            return _fail(proc.stderr[-1500:])  # the END of a traceback has the real error
+            return _fail(
+                stderr[-1500:] or "The code failed without an error message."
+            )
 
-        with open(os.path.join(work, "result.json"), encoding="utf-8") as f:
-            result = json.load(f)["result"]
+        result_file = _regular_file(os.path.join(out_dir, "result.json"))
+        if result_file is None:
+            return _fail("The code finished but did not produce a valid result file.")
+
+        try:
+            with open(result_file, encoding="utf-8") as f:
+                result = json.load(f)["result"]
+        except (OSError, ValueError, KeyError, TypeError):
+            return _fail("The result file could not be read.")
+
+        if not isinstance(result, str):
+            result = str(result)[:3000]
 
         chart_path = None
-        temp_chart = os.path.join(work, "chart.png")
-        if os.path.exists(temp_chart):
+        temp_chart = _regular_file(os.path.join(out_dir, "chart.png"))
+
+        if temp_chart and os.path.getsize(temp_chart) <= MAX_CHART_BYTES:
             os.makedirs(config.CHART_DIR, exist_ok=True)
             chart_path = os.path.join(config.CHART_DIR, uuid.uuid4().hex + ".png")
-            shutil.copy(temp_chart, chart_path)
+            shutil.copyfile(temp_chart, chart_path)
 
-        return {"ok": True, "result": result, "chart_path": chart_path, "error": ""}
+        return {
+            "ok": True,
+            "result": result,
+            "chart_path": chart_path,
+            "error": "",
+        }
+
     finally:
-        shutil.rmtree(work, ignore_errors=True)  # always clean up
+        _remove_container(docker, name)
+        shutil.rmtree(work, ignore_errors=True)
