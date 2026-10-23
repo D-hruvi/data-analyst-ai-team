@@ -12,6 +12,7 @@ class Tracker:
         self.output_tokens = 0     # Groq bills the model's hidden "thinking" as output
         self.retries = 0           # times work was sent back to be fixed
         self.rate_limit_waits = 0  # times we paused because of a 429 error
+        self.connection_retries = 0  # retries after connection errors or timeouts
 
     def add_call(self, input_tokens, output_tokens):
         self.llm_calls += 1
@@ -35,4 +36,5 @@ class Tracker:
             "seconds": round(time.time() - self.started, 2),
             "retries": self.retries,
             "rate_limit_waits": self.rate_limit_waits,
+            "connection_retries": self.connection_retries,
         }

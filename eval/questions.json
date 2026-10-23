@@ -1,0 +1,656 @@
+[
+  {
+    "id": "tips-01",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "What is the average total_bill?",
+    "expected": {
+      "type": "number",
+      "value": 19.785943,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-02",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "What is the sum of all tip values?",
+    "expected": {
+      "type": "number",
+      "value": 731.58,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-03",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "lookup",
+    "question": "Which day has the highest average tip?",
+    "expected": {
+      "type": "text",
+      "value": "Sun"
+    }
+  },
+  {
+    "id": "tips-04",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "What percentage of rows have smoker equal to Yes?",
+    "expected": {
+      "type": "number",
+      "value": 38.114754,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-05",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "What is the average of tip divided by total_bill, times 100, calculated for each row?",
+    "expected": {
+      "type": "number",
+      "value": 16.080258,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-06",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "lookup",
+    "question": "What is the largest total_bill value?",
+    "expected": {
+      "type": "number",
+      "value": 50.81,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-07",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "What is the median tip?",
+    "expected": {
+      "type": "number",
+      "value": 2.9,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-08",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "How many rows have size equal to 6?",
+    "expected": {
+      "type": "number",
+      "value": 4,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "tips-09",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "What is the average tip for time Dinner minus the average tip for time Lunch?",
+    "expected": {
+      "type": "number",
+      "value": 0.374582,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-10",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "lookup",
+    "question": "Which sex has the highest sum of total_bill?",
+    "expected": {
+      "type": "text",
+      "value": "Male"
+    }
+  },
+  {
+    "id": "tips-11",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "What is the correlation between total_bill and tip?",
+    "expected": {
+      "type": "number",
+      "value": 0.675734,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-12",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "calculation",
+    "question": "How many rows have a tip greater than 10?",
+    "expected": {
+      "type": "number",
+      "value": 0,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "tips-13",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "chart",
+    "question": "Draw a bar chart of the sum of tip for each day.",
+    "expected": {
+      "type": "chart",
+      "plot": "bar",
+      "labels": [
+        "Fri",
+        "Sat",
+        "Sun",
+        "Thur"
+      ],
+      "heights": [
+        51.96,
+        260.4,
+        247.39,
+        171.83
+      ],
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "tips-14",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "chart",
+    "question": "Draw a histogram of total_bill.",
+    "expected": {
+      "type": "chart",
+      "plot": "hist",
+      "n": 244,
+      "min": 3.07,
+      "max": 50.81
+    }
+  },
+  {
+    "id": "tips-15",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "chart",
+    "question": "Draw a scatter plot with total_bill on the x-axis and tip on the y-axis.",
+    "expected": {
+      "type": "chart",
+      "plot": "scatter",
+      "n": 244,
+      "x": {
+        "min": 3.07,
+        "max": 50.81,
+        "sum": 4827.77
+      },
+      "y": {
+        "min": 1.0,
+        "max": 10.0,
+        "sum": 731.58
+      },
+      "rel_tol": 0.001
+    }
+  },
+  {
+    "id": "tips-16",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "unanswerable",
+    "question": "What is the average waiter rating?",
+    "expected": {
+      "type": "cannot_answer"
+    }
+  },
+  {
+    "id": "tips-17",
+    "dataset": "tips",
+    "csv": "eval/datasets/tips.csv",
+    "kind": "unanswerable",
+    "question": "Which waiter received the most tips?",
+    "expected": {
+      "type": "cannot_answer"
+    }
+  },
+  {
+    "id": "penguins-01",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "How many rows are in the data?",
+    "expected": {
+      "type": "number",
+      "value": 344,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "penguins-02",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "What is the average body_mass_g?",
+    "expected": {
+      "type": "number",
+      "value": 4201.754386,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-03",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "lookup",
+    "question": "Which species has the most rows?",
+    "expected": {
+      "type": "text",
+      "value": "Adelie"
+    }
+  },
+  {
+    "id": "penguins-04",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "What is the average flipper_length_mm of the Gentoo species?",
+    "expected": {
+      "type": "number",
+      "value": 217.186992,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-05",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "How many rows have a missing value in the sex column?",
+    "expected": {
+      "type": "number",
+      "value": 11,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "penguins-06",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "lookup",
+    "question": "Which island has the highest average body_mass_g?",
+    "expected": {
+      "type": "text",
+      "value": "Biscoe"
+    }
+  },
+  {
+    "id": "penguins-07",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "lookup",
+    "question": "What is the largest bill_length_mm value?",
+    "expected": {
+      "type": "number",
+      "value": 59.6,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-08",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "Among the rows where sex is known, what percentage have sex equal to FEMALE?",
+    "expected": {
+      "type": "number",
+      "value": 49.54955,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-09",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "What is the average bill_depth_mm of the Chinstrap species?",
+    "expected": {
+      "type": "number",
+      "value": 18.420588,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-10",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "lookup",
+    "question": "Which species has the highest average body_mass_g?",
+    "expected": {
+      "type": "text",
+      "value": "Gentoo"
+    }
+  },
+  {
+    "id": "penguins-11",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "How many rows have at least one missing value in any column?",
+    "expected": {
+      "type": "number",
+      "value": 11,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "penguins-12",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "What is the sample standard deviation of flipper_length_mm?",
+    "expected": {
+      "type": "number",
+      "value": 14.061714,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-13",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "calculation",
+    "question": "What is the average body_mass_g of MALE penguins minus the average body_mass_g of FEMALE penguins?",
+    "expected": {
+      "type": "number",
+      "value": 683.411797,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-14",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "chart",
+    "question": "Draw a bar chart of the number of rows for each species.",
+    "expected": {
+      "type": "chart",
+      "plot": "bar",
+      "labels": [
+        "Adelie",
+        "Gentoo",
+        "Chinstrap"
+      ],
+      "heights": [
+        152.0,
+        124.0,
+        68.0
+      ],
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-15",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "chart",
+    "question": "Draw a scatter plot with bill_length_mm on the x-axis and bill_depth_mm on the y-axis.",
+    "expected": {
+      "type": "chart",
+      "plot": "scatter",
+      "n": 342,
+      "x": {
+        "min": 32.1,
+        "max": 59.6,
+        "sum": 15021.3
+      },
+      "y": {
+        "min": 13.1,
+        "max": 21.5,
+        "sum": 5865.7
+      },
+      "rel_tol": 0.001
+    }
+  },
+  {
+    "id": "penguins-16",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "chart",
+    "question": "Draw a bar chart of the average body_mass_g for each species.",
+    "expected": {
+      "type": "chart",
+      "plot": "bar",
+      "labels": [
+        "Adelie",
+        "Chinstrap",
+        "Gentoo"
+      ],
+      "heights": [
+        3700.662252,
+        3733.088235,
+        5076.01626
+      ],
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "penguins-17",
+    "dataset": "penguins",
+    "csv": "eval/datasets/penguins.csv",
+    "kind": "unanswerable",
+    "question": "What is the average age of the penguins?",
+    "expected": {
+      "type": "cannot_answer"
+    }
+  },
+  {
+    "id": "taxis-01",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "How many rows are in the data?",
+    "expected": {
+      "type": "number",
+      "value": 6433,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "taxis-02",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "What is the average fare?",
+    "expected": {
+      "type": "number",
+      "value": 13.091073,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-03",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "What is the sum of all tip values?",
+    "expected": {
+      "type": "number",
+      "value": 12732.32,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-04",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "lookup",
+    "question": "Which pickup_borough has the most rides?",
+    "expected": {
+      "type": "text",
+      "value": "Manhattan"
+    }
+  },
+  {
+    "id": "taxis-05",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "What is the average distance of rides where payment is credit card?",
+    "expected": {
+      "type": "number",
+      "value": 3.221842,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-06",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "How many rows have a missing value in the payment column?",
+    "expected": {
+      "type": "number",
+      "value": 44,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "taxis-07",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "How many rides had more than 2 passengers?",
+    "expected": {
+      "type": "number",
+      "value": 783,
+      "rel_tol": 0
+    }
+  },
+  {
+    "id": "taxis-08",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "lookup",
+    "question": "What is the highest fare?",
+    "expected": {
+      "type": "number",
+      "value": 150.0,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-09",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "What is the average total for rides where color is yellow?",
+    "expected": {
+      "type": "number",
+      "value": 18.884252,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-10",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "lookup",
+    "question": "On which calendar date (YYYY-MM-DD) were the most rides picked up?",
+    "expected": {
+      "type": "text",
+      "value": "2019-03-14"
+    }
+  },
+  {
+    "id": "taxis-11",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "What is the average trip duration in minutes, from pickup to dropoff?",
+    "expected": {
+      "type": "number",
+      "value": 14.349617,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-12",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "calculation",
+    "question": "What percentage of rides have a tip of exactly 0?",
+    "expected": {
+      "type": "number",
+      "value": 35.924141,
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-13",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "lookup",
+    "question": "Which pickup_zone has the most rides?",
+    "expected": {
+      "type": "text",
+      "value": "Midtown Center"
+    }
+  },
+  {
+    "id": "taxis-14",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "chart",
+    "question": "Draw a bar chart of the number of rides for each pickup_borough. Ignore rows with a missing pickup_borough.",
+    "expected": {
+      "type": "chart",
+      "plot": "bar",
+      "labels": [
+        "Manhattan",
+        "Queens",
+        "Brooklyn",
+        "Bronx"
+      ],
+      "heights": [
+        5268.0,
+        657.0,
+        383.0,
+        99.0
+      ],
+      "rel_tol": 0.01
+    }
+  },
+  {
+    "id": "taxis-15",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "chart",
+    "question": "Draw a histogram of fare.",
+    "expected": {
+      "type": "chart",
+      "plot": "hist",
+      "n": 6433,
+      "min": 1.0,
+      "max": 150.0
+    }
+  },
+  {
+    "id": "taxis-16",
+    "dataset": "taxis",
+    "csv": "eval/datasets/taxis.csv",
+    "kind": "unanswerable",
+    "question": "What is the average driver rating?",
+    "expected": {
+      "type": "cannot_answer"
+    }
+  }
+]

@@ -4,7 +4,7 @@
 import re
 import time
 
-from groq import Groq, RateLimitError
+from groq import Groq, RateLimitError, APIConnectionError, APITimeoutError
 
 from app import config
 
@@ -70,6 +70,15 @@ def chat(messages, tracker=None, max_tokens=3000, reasoning_effort=None):
                 tracker.rate_limit_waits += 1
 
             time.sleep(_wait_seconds(error, attempt))
+
+        except (APIConnectionError, APITimeoutError):
+            if attempt == config.LLM_MAX_WAITS:
+                raise
+
+            if tracker:
+                tracker.connection_retries += 1
+
+            time.sleep(min(2 ** (attempt + 1), 30))
 
     if tracker:
         tracker.add_call(

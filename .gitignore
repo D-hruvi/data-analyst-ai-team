@@ -6,3 +6,10 @@ venv/
 charts/
 uploads/
 .DS_Store
+
+# Local backups
+*.bak
+*.chart-backup
+
+# Generated evaluation output
+eval/results.json
