@@ -76,7 +76,7 @@ mean_bar = "s = df.groupby('day')['tip'].mean()\nplt.bar(s.index, s.values)\nres
 check("chart bar: right data passes", verdict(bar, rec("ok", code=good_bar, chart=True)), "pass")
 check("chart bar: wrong data (mean) fails", verdict(bar, rec("ok", code=mean_bar, chart=True)), "fail")
 check("chart: no file fails", verdict(bar, rec("ok", code=good_bar, chart=False)), "fail")
-check("chart hist: passes",
+check("chart hist: 10 bins passes",
       verdict(hist, rec("ok", code="plt.hist(df['total_bill'], bins=10)\nresult = 'ok'", chart=True)), "pass")
 check("chart hist: 20 bins passes",
       verdict(hist, rec("ok", code="plt.hist(df['total_bill'], bins=20)\nresult = 'ok'", chart=True)), "pass")
