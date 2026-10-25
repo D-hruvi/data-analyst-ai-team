@@ -13,3 +13,5 @@ uploads/
 
 # Generated evaluation output
 eval/results.json
+
+eval/results/dry*
