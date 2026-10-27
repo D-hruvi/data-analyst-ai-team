@@ -107,6 +107,11 @@ check("contract: relaxed scoring still fails a wrong chart",
 check("contract: relaxed scoring ignores other errors",
       scorer.score(hist, other_error, relax_result_contract=True)["verdict"], "fail")
 
+# ---- number words regression
+four = q({"type": "number", "value": 4, "rel_tol": 0})
+check("words: four rows passes", verdict(four, rec("Four rows have size 6.")), "pass")
+check("words: five rows fails", verdict(four, rec("Five rows have size 6.")), "fail")
+
 if failures:
     print(f"{len(failures)} CHECK(S) FAILED. Paste this output. Do not run the evaluation.")
     sys.exit(1)

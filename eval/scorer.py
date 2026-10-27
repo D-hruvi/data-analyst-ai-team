@@ -49,7 +49,34 @@ def _close(value, decimals, exp):
     return abs(value - target) <= max(tol, 1e-9)
 
 
+_WORDS = {
+    "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4,
+    "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
+    "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
+    "fourteen": 14, "fifteen": 15, "sixteen": 16, "seventeen": 17,
+    "eighteen": 18, "nineteen": 19, "twenty": 20,
+}
+
+
+def _words_to_digits(text):
+    pattern = r"\b(" + "|".join(_WORDS) + r")\b"
+    return re.sub(pattern, lambda m: str(_WORDS[m.group(1).lower()]),
+                  str(text), flags=re.I)
+
+
 def score_number(exp, answer):
+    """Try digit scoring first, then number words if it fails."""
+    res = _score_number(exp, answer)
+    if res["verdict"] == "fail":
+        converted = _words_to_digits(answer)
+        if converted != str(answer):
+            res2 = _score_number(exp, converted)
+            if res2["verdict"] != "fail":
+                return res2
+    return res
+
+
+def _score_number(exp, answer):
     nums = _numbers(answer)
     if exp["value"] == 0 and not nums:
         if re.search(r"\b(no|none|zero|nothing)\b", str(answer).lower()):
@@ -66,6 +93,7 @@ def score_number(exp, answer):
 
 
 # ---------------------------------------------------------------- text
+
 def _word_re(s):
     return re.compile(r"(?<![A-Za-z0-9])" + re.escape(s) + r"(?![A-Za-z0-9])", re.I)
 

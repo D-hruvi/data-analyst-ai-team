@@ -8,7 +8,7 @@ Strict = `review` counts as wrong. Lenient = `review` counts as right. The truth
 |---|---|---|---|---|---|
 | baseline1 | 50 | 47 (94%) | 47 (94%) | 84% - 98% | 0 |
 | baseline3 | 50 | 50 (100%) | 50 (100%) | 93% - 100% | 0 |
-| team | 50 | 47 (94%) | 47 (94%) | 84% - 98% | 0 |
+| team | 50 | 48 (96%) | 48 (96%) | 87% - 99% | 0 |
 
 ## Strict score by question kind
 
@@ -16,7 +16,7 @@ Strict = `review` counts as wrong. Lenient = `review` counts as right. The truth
 |---|---|---|---|---|
 | baseline1 | 11/11 | 27/27 | 5/8 | 4/4 |
 | baseline3 | 11/11 | 27/27 | 8/8 | 4/4 |
-| team | 11/11 | 25/27 | 7/8 | 4/4 |
+| team | 11/11 | 26/27 | 7/8 | 4/4 |
 
 ## Failure types (count)
 
@@ -24,7 +24,7 @@ Strict = `review` counts as wrong. Lenient = `review` counts as right. The truth
 |---|---|---|---|---|---|---|---|---|---|
 | baseline1 | 0 | 0 | 0 | 0 | 0 | 0 | 3 | 0 | 0 |
 | baseline3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| team | 2 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
+| team | 1 | 0 | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 
 ## Cost, time and retries
 
@@ -46,13 +46,13 @@ Strict = `review` counts as wrong. Lenient = `review` counts as right. The truth
 
 | Compared with | Both right | Only team right | Only baseline right | Both wrong | Sign-test p (strict) |
 |---|---|---|---|---|---|
-| baseline1 | 45 | 2 | 2 | 1 | 1.000 |
-| baseline3 | 47 | 0 | 3 | 0 | 0.250 |
+| baseline1 | 46 | 2 | 1 | 1 | 1.000 |
+| baseline3 | 48 | 0 | 2 | 0 | 0.500 |
 
 ### Reading
 
-- Team vs baseline1: NOT distinguishable at this sample size (2 vs 2 one-sided wins, p=1.00). Do not claim a winner.
-- Team vs baseline3: NOT distinguishable at this sample size (0 vs 3 one-sided wins, p=0.25). Do not claim a winner.
+- Team vs baseline1: NOT distinguishable at this sample size (2 vs 1 one-sided wins, p=1.00). Do not claim a winner.
+- Team vs baseline3: NOT distinguishable at this sample size (0 vs 2 one-sided wins, p=0.50). Do not claim a winner.
 - This is ONE run of 50 questions on 3 small datasets. A gap of a few questions is noise.
 - The answer to 'is the team better?' must also weigh the extra tokens, cost and time above.
 
@@ -67,9 +67,8 @@ Strict = `review` counts as wrong. Lenient = `review` counts as right. The truth
 ### baseline3 (0)
 
 
-### team (3)
+### team (2)
 
 - tips-05 [fail/wrong_answer] no number in the answer (expected 16.080258) | answer: The list shows the tip percentage for each bill.   The average of those percentages is not
-- tips-08 [fail/wrong_answer] expected 4, answer has [6.0] | answer: Four rows have a size of 6.   No special handling of missing values was needed.
 - tips-15 [fail/not_sure] gave up after the allowed attempts | answer: I am not sure.
 
