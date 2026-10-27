@@ -39,6 +39,7 @@ MAX_UPLOAD_MB = 10
 MAX_QUESTION_CHARS = 500
 CHART_DIR = os.path.join(ROOT, "charts")
 UPLOAD_DIR = os.path.join(ROOT, "uploads")
+CHART_MAX_AGE_HOURS = 24  # chart pictures older than this are deleted when the server starts
 
 
 def require_key():

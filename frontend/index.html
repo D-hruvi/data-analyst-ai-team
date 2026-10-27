@@ -1,0 +1,339 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Analyst AI Team</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #1c1f24;
+      --muted: #5d6672;
+      --line: #d9dde3;
+      --btn: #2457d6;
+      --ok: #17794a;
+      --warn: #946200;
+      --bad: #b3261e;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14171c;
+        --card: #1d2128;
+        --text: #e8eaee;
+        --muted: #a2abb8;
+        --line: #333a45;
+        --btn: #3b6df0;
+        --ok: #5ed39a;
+        --warn: #e8b84a;
+        --bad: #ff8a80;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    h1 { font-size: 1.5rem; margin: 0 0 4px; }
+    .sub { color: var(--muted); margin: 0 0 20px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    label.field {
+      display: block;
+      font-weight: 600;
+      margin: 14px 0 4px;
+    }
+
+    label.field:first-child { margin-top: 0; }
+
+    input[type=file], textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea { min-height: 72px; resize: vertical; }
+
+    .modes {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+
+    .modes label { font-weight: 400; }
+
+    button {
+      background: var(--btn);
+      color: #fff;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:disabled { opacity: .6; cursor: wait; }
+
+    .note { color: var(--muted); font-size: .875rem; margin-top: 12px; }
+
+    .badge {
+      display: inline-block;
+      font-size: .8125rem;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+    }
+
+    .badge.ok { color: var(--ok); }
+    .badge.warn { color: var(--warn); }
+    .badge.bad { color: var(--bad); }
+
+    .mode { color: var(--muted); font-size: .875rem; margin-left: 8px; }
+
+    #answer {
+      white-space: pre-wrap;
+      font-size: 1.0625rem;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
+
+    #detail {
+      color: var(--muted);
+      font-size: .875rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    #chart {
+      max-width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      margin: 8px 0;
+      background: #fff;
+    }
+
+    details { margin: 10px 0; }
+
+    pre {
+      overflow-x: auto;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: .875rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .stat b { display: block; font-size: 1.125rem; }
+    .stat span { color: var(--muted); font-size: .8125rem; }
+    #error { color: var(--bad); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Data Analyst AI Team</h1>
+  <p class="sub">Upload a CSV, ask a question in plain English, and get an answer with the code behind it.</p>
+
+  <form id="form" class="card">
+    <label class="field" for="file">CSV file</label>
+    <input id="file" type="file" accept=".csv">
+
+    <label class="field" for="question">Your question</label>
+    <textarea id="question" maxlength="500" placeholder="For example: Which day has the highest average tip?"></textarea>
+
+    <div class="modes">
+      <label><input type="radio" name="mode" value="team" checked> AI team (planner, coder, reviewer, explainer)</label>
+      <label><input type="radio" name="mode" value="baseline"> Single AI</label>
+    </div>
+
+    <button id="go" type="submit">Ask</button>
+    <p id="busy" class="note" hidden>Working. The team can take up to a minute.</p>
+    <p class="note">Upload only public or made-up data. The file goes to this server. A short summary of it (column names, types and a few sample rows) is sent to the Groq AI service.</p>
+  </form>
+
+  <p id="error" role="alert" hidden></p>
+
+  <section id="result" class="card" aria-live="polite" hidden>
+    <div><span id="badge" class="badge"></span><span id="mode" class="mode"></span></div>
+    <div id="answer"></div>
+    <div id="detail" hidden></div>
+    <img id="chart" alt="Chart made for your question" hidden>
+
+    <details>
+      <summary>Code used</summary>
+      <pre><code id="code"></code></pre>
+    </details>
+
+    <div class="stats">
+      <div class="stat"><b id="calls">-</b><span>AI calls</span></div>
+      <div class="stat"><b id="tokens">-</b><span>tokens</span></div>
+      <div class="stat"><b id="cost">-</b><span>cost (USD)</span></div>
+      <div class="stat"><b id="seconds">-</b><span>seconds</span></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  const STATUS = {
+    ok: ["Answered", "ok"],
+    answered: ["Answered", "ok"],
+    cannot_answer: ["Cannot answer from this data", "warn"],
+    not_sure: ["Not sure", "warn"],
+    error: ["Error", "bad"]
+  };
+
+  function num(value, digits) {
+    return typeof value === "number" ? value.toFixed(digits) : "-";
+  }
+
+  function showError(message) {
+    $("error").textContent = message;
+    $("error").hidden = false;
+    $("result").hidden = true;
+  }
+
+  function setBusy(busy) {
+    $("go").disabled = busy;
+    $("go").textContent = busy ? "Working..." : "Ask";
+    $("busy").hidden = !busy;
+  }
+
+  function render(body) {
+    $("error").hidden = true;
+
+    const [label, css] = STATUS[body.status] || ["Unknown result", "bad"];
+    $("badge").textContent = label;
+    $("badge").className = "badge " + css;
+    $("mode").textContent = body.mode === "baseline" ? "Single AI" : "AI team";
+
+    let text = body.answer;
+
+    if (body.status === "cannot_answer" || body.status === "error" || !text) {
+      text = body.error || text || "No answer.";
+    }
+
+    $("answer").textContent = text;
+
+    const detail = $("detail");
+
+    if (body.status === "not_sure" && body.error) {
+      detail.textContent = "Details: " + body.error;
+      detail.hidden = false;
+    } else {
+      detail.hidden = true;
+    }
+
+    const chart = $("chart");
+
+    if (body.chart_url) {
+      chart.src = body.chart_url;
+      chart.hidden = false;
+    } else {
+      chart.hidden = true;
+      chart.removeAttribute("src");
+    }
+
+    $("code").textContent = body.code || "(no code was produced)";
+
+    const s = body.stats || {};
+    $("calls").textContent = num(s.llm_calls, 0);
+    $("tokens").textContent = num(s.total_tokens, 0);
+    $("cost").textContent = typeof s.cost_usd === "number"
+      ? "$" + s.cost_usd.toFixed(5)
+      : "-";
+    $("seconds").textContent = num(s.seconds, 1);
+
+    $("result").hidden = false;
+  }
+
+  $("form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const file = $("file").files[0];
+    const question = $("question").value.trim();
+
+    if (!file) {
+      showError("Choose a CSV file first.");
+      return;
+    }
+
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      showError("The file must end in .csv.");
+      return;
+    }
+
+    if (!question) {
+      showError("Type a question first.");
+      return;
+    }
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("question", question);
+    data.append("mode", document.querySelector('input[name="mode"]:checked').value);
+
+    setBusy(true);
+
+    try {
+      const res = await fetch("/ask", { method: "POST", body: data });
+      const body = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        showError(
+          body && typeof body.detail === "string"
+            ? body.detail
+            : "Server error (" + res.status + ")."
+        );
+        return;
+      }
+
+      render(body);
+    } catch (err) {
+      showError("Could not reach the server. Is it running?");
+    } finally {
+      setBusy(false);
+    }
+  });
+</script>
+</body>
+</html>
