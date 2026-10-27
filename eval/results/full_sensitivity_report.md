@@ -71,4 +71,3 @@ Strict = `review` counts as wrong. Lenient = `review` counts as right. The truth
 - tips-05 [fail/wrong_answer] no number in the answer (expected 16.080258) | answer: The list shows the tip percentage for each bill.   The average of those percentages is not
 - tips-08 [fail/wrong_answer] expected 4, answer has [6.0] | answer: Four rows have a size of 6.   No special handling of missing values was needed.
 - tips-15 [fail/not_sure] gave up after the allowed attempts | answer: I am not sure.
-
