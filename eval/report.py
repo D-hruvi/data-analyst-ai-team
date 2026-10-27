@@ -42,7 +42,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-name", required=True)
     ap.add_argument("--rescore", action="store_true")
+    ap.add_argument("--relax-chart-contract", action="store_true",
+                    help="POST-HOC sensitivity analysis. Never the primary result.")
     args = ap.parse_args()
+    if args.relax_chart_contract:
+        args.rescore = True
 
     path = os.path.join(RESULTS_DIR, f"{args.run_name}.jsonl")
     latest = {}
@@ -56,11 +60,22 @@ def main():
     if args.rescore:
         for key, r in latest.items():
             if r["status"] != "exception":
-                r["score"] = scorer.score(questions[r["id"]], r)
+                r["score"] = scorer.score(
+                    questions[r["id"]], r,
+                    relax_result_contract=args.relax_chart_contract
+                )
 
     arms = [a for a in ARMS if any(k[0] == a for k in latest)]
     rows = {a: [r for k, r in latest.items() if k[0] == a] for a in arms}
-    lines = [f"# Evaluation report: {args.run_name}", ""]
+    if args.relax_chart_contract:
+        lines = [f"# POST-HOC SENSITIVITY ANALYSIS: {args.run_name}", "",
+                 "**Not the primary result.** Chart answers whose code ended with `result = None` "
+                 "(rejected by the runner) are scored on the chart itself. "
+                 "The primary report keeps them as failures. "
+                 "The failure table below reflects relaxed rescoring; the raw JSONL records "
+                 "retain the original execution statuses and scores.", ""]
+    else:
+        lines = [f"# Evaluation report: {args.run_name}", ""]
 
     # ---- accuracy
     lines += ["## Accuracy", "",
@@ -159,7 +174,8 @@ def main():
         lines.append("")
 
     text = "\n".join(lines)
-    out = os.path.join(RESULTS_DIR, f"{args.run_name}_report.md")
+    suffix = "_sensitivity_report.md" if args.relax_chart_contract else "_report.md"
+    out = os.path.join(RESULTS_DIR, f"{args.run_name}{suffix}")
     with open(out, "w", encoding="utf-8") as f:
         f.write(text + "\n")
     print(text)

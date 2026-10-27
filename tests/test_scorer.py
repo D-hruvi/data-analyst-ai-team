@@ -86,6 +86,27 @@ check("chart scatter: swapped axes fails",
       verdict(sc, rec("ok", code="plt.scatter(df['tip'], df['total_bill'])\nresult = 'ok'", chart=True)), "fail")
 
 print()
+# ---- regression: chart code that ended with result = None (runner rejects it)
+no_result = {
+    "status": "error", "ok": False, "answer": "", "chart_exists": False,
+    "error": "The code did not set 'result' (or set it to None).",
+    "code": "plt.hist(df['total_bill'], bins=20)\nresult = None",
+}
+wrong_chart = dict(
+    no_result,
+    code="plt.hist(df['tip'], bins=20)\nresult = None",
+)
+other_error = dict(no_result, error="KeyError: 'x'")
+
+check("contract: default scoring still fails it",
+      scorer.score(hist, no_result)["verdict"], "fail")
+check("contract: relaxed scoring rescues a correct chart",
+      scorer.score(hist, no_result, relax_result_contract=True)["verdict"], "pass")
+check("contract: relaxed scoring still fails a wrong chart",
+      scorer.score(hist, wrong_chart, relax_result_contract=True)["verdict"], "fail")
+check("contract: relaxed scoring ignores other errors",
+      scorer.score(hist, other_error, relax_result_contract=True)["verdict"], "fail")
+
 if failures:
     print(f"{len(failures)} CHECK(S) FAILED. Paste this output. Do not run the evaluation.")
     sys.exit(1)

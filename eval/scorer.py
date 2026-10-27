@@ -18,6 +18,7 @@ from app import config, sandbox
 NUM_RE = re.compile(r"-?\d+(?:\.\d+)?")
 ISO_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 MAX_DISTINCT_NUMBERS = 3  # more than this + a match = "review"
+RESULT_MISSING = "did not set 'result'"
 _CATEGORY_CACHE = {}
 
 
@@ -257,7 +258,7 @@ def score_chart(exp, rec, csv_abs):
 
 
 # ---------------------------------------------------------------- main entry
-def score(q, rec):
+def score(q, rec, relax_result_contract=False):
     """q = a question from questions.json. rec = what the system returned (see run_eval.py)."""
     exp = q["expected"]
     status = rec.get("status")
@@ -271,6 +272,15 @@ def score(q, rec):
         if delivered:
             return _res("fail", "guessed", "gave an answer to an unanswerable question")
         return _res("fail", "error", "crashed instead of refusing")
+
+    # POST-HOC sensitivity only, never the primary result: the chart code ran, but the runner
+    # rejected it because `result` was None. Score the chart itself.
+    if (relax_result_contract and exp["type"] == "chart" and status == "error"
+            and RESULT_MISSING in str(rec.get("error", "")) and rec.get("code")):
+        r = score_chart(exp, dict(rec, chart_exists=True), os.path.join(config.ROOT, q["csv"]))
+        if r["verdict"] == "pass":
+            return _res("pass", "correct_post_hoc", "chart is right, but the run failed because result was None")
+        return r
 
     # the question can be answered
     if status == "cannot_answer":
