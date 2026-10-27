@@ -84,6 +84,14 @@ The sensitivity report must therefore be read separately from the corrected prim
 
 **Hypothetical sensitivity footnote:** If the relaxed chart-scoring rule were also applied to the team's equivalent `tips-15` case, the team would score 49/50, while baseline1 and baseline3 would each score 50/50. The corrected primary result remains 48/50 for the team. This is a hypothetical comparison, not the primary result, and it does not change the conclusion that the team did not outperform baseline3.
 
+## Scorer correction: as built vs corrected
+
+As built, the scorer gave the team 47/50. After the run, a manual check of every non-passing record found that `tips-08` was marked wrong only because the team wrote "four" instead of "4". The scorer was then changed to accept number words (zero to twenty) for all three arms. Exactly one verdict changed: team `tips-08`, from fail to pass.
+
+This correction was made after the results were seen, and it favoured the team. Both numbers are therefore reported: 47/50 as built (tag `eval-full-as-built`) and 48/50 corrected (tag `eval-full-scorer-v2`). The saved model outputs were not changed and no agent was re-run.
+
+Every non-passing record was inspected by hand. Passing records were only sampled (8 non-chart passes per arm, compared with the expected values, no errors seen), so scorer errors on passes cannot be ruled out.
+
 ## 6. Cost and Efficiency
 
 In the recorded run, the team cost approximately 3.5 times as much as baseline3 and used approximately 3.6 times as many tokens.
