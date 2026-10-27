@@ -1,0 +1,14 @@
+{
+  "started": "2026-10-25T21:59:26",
+  "model": "openai/gpt-oss-20b",
+  "reasoning_effort": "low",
+  "agent_effort": {
+    "planner": "low",
+    "coder": "low",
+    "reviewer": "low",
+    "explainer": "low"
+  },
+  "git_commit": "2b6e1b3",
+  "git_tree_dirty": true,
+  "questions_sha256": "01de651e74291c88754b14f52e3c589f9a786be62711416b79dac3a29f134aad"
+}

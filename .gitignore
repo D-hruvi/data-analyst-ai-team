@@ -15,3 +15,4 @@ uploads/
 eval/results.json
 
 eval/results/dry*
+eval/results/*_console.log
