@@ -90,7 +90,7 @@ Run the evaluation and regenerate its report:
 
 The evaluation saves results as it runs so it can resume after interruption.
 
-Dataset licences have not been checked. See `eval/datasets/SOURCES.md`.
+Dataset licences could not be established (checked 2026-10-27). See `eval/datasets/SOURCES.md` for sources, status and file fingerprints.
 
 ## Evaluation results
 
