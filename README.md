@@ -119,3 +119,24 @@ Future evaluation should use more questions, harder tasks, more diverse datasets
 ## Further work
 
 Potential improvements include investigating the team's `tips-05` failure to report the requested average, understanding why `tips-15` ended in `not_sure`, and testing any proposed changes in a new evaluation version. Do not treat post-hoc sensitivity results as changes to the primary run.
+## Web page (Stage 4)
+
+Start it with one command:
+
+```bash
+./run.sh
+```
+
+Then open http://127.0.0.1:8000. Pick a CSV, type a question, and choose "AI team" or "Single AI". The page shows the answer, the chart (if any), the code that was used, and AI calls, tokens, cost and seconds.
+
+The API behind it: `POST /ask` (form fields `file`, `question`, `mode`) returns `status`, `answer`, `code`, `chart_url`, `error` and `stats`. `GET /health` shows the model. Test it with `.venv/bin/python -m tests.test_api` (no AI calls, no Docker).
+
+**Run it on your own computer only.** `run.sh` listens on 127.0.0.1. Do not expose it to the internet. The API has no login and no rate limit, so anyone who reached it could spend your Groq quota, and the sandbox needs Docker on the host. A short summary of an uploaded CSV (column names, types, sample rows) is sent to Groq, so upload only public or made-up data. Chart pictures older than 24 hours are deleted when the server starts.
+
+### Demo (about 3 minutes)
+
+1. Upload `eval/datasets/tips.csv`. Ask "What is the average tip?" in AI team mode. Open "Code used".
+2. Ask "Draw a bar chart of the sum of tip for each day." Point out the chart, the cost and the time.
+3. Ask "What is the average waiter rating?" The system refuses instead of guessing.
+4. Ask the first question again in Single AI mode and compare tokens, cost and seconds.
+5. Say what the evaluation found: on 50 questions the team did not beat a single AI with 3 attempts, and cost about 3.5 times as much (`eval/results/RESULTS.md`).
