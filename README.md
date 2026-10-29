@@ -127,9 +127,22 @@ Start it with one command:
 ./run.sh
 ```
 
-Then open http://127.0.0.1:8000. Pick a CSV, type a question, and choose "AI team" or "Single AI". The page shows the answer, the chart (if any), the code that was used, and AI calls, tokens, cost and seconds.
+Then open http://127.0.0.1:8000. The web interface provides:
+- **Playground & Arena:** Select a preloaded dataset (`tips.csv`, `penguins.csv`, `taxis.csv`, `sample_sales.csv`) or upload a custom CSV. Inspect schema and sample rows. Run a question against:
+  - **Baseline 1:** Single Agent (1 attempt)
+  - **Baseline 2:** Single Agent (up to 3 attempts with self-correction retry)
+  - **Multi-Agent Team:** 4 Agents (Planner → Coder → Reviewer → Explainer)
+  - **Side-by-Side Arena:** Concurrently runs all three configurations to compare latency, tokens, cost, answers, and generated code side-by-side.
+- **Benchmark Suite (50 Qs):** Interactive dashboard exploring the 50 frozen benchmark questions across three datasets, complete with KPI cards, empirical takeaways, filtering, and deep-dive question inspection.
+- **Architecture & Sandbox Security:** Visual topology of all three execution arms and the Docker isolation guarantees.
 
-The API behind it: `POST /ask` (form fields `file`, `question`, `mode`) returns `status`, `answer`, `code`, `chart_url`, `error` and `stats`. `GET /health` shows the model. Test it with `.venv/bin/python -m tests.test_api` (no AI calls, no Docker).
+The API behind it:
+- `POST /ask` (form fields `file`, `question`, `mode` where `mode` is `baseline1`, `baseline2`, or `team`) returns `status`, `answer`, `code`, `chart_url`, `error`, `plan`, and `stats`.
+- `GET /health` shows the model.
+- `GET /api/sample-datasets` returns built-in benchmark datasets.
+- `GET /api/benchmark` returns precomputed benchmark statistics and question-level results.
+
+Test it with `.venv/bin/python -m tests.test_api` (no AI calls, no Docker).
 
 **Run it on your own computer only.** `run.sh` listens on 127.0.0.1. Do not expose it to the internet. The API has no login and no rate limit, so anyone who reached it could spend your Groq quota, and the sandbox needs Docker on the host. A short summary of an uploaded CSV (column names, types, sample rows) is sent to Groq, so upload only public or made-up data. Chart pictures older than 24 hours are deleted when the server starts.
 

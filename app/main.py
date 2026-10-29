@@ -9,9 +9,15 @@ import uuid
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import config
+from app.benchmark_data import (
+    get_benchmark_data,
+    get_sample_csv_path,
+    get_sample_datasets,
+)
 from app.orchestrator import analyze
 from baseline.single_agent import answer_question
 
@@ -98,8 +104,34 @@ def public_result(result, mode):
 
 
 @app.get("/health")
+@app.get("/api/health")
 def health():
     return {"status": "ok", "model": config.MODEL}
+
+
+@app.get("/api/sample-datasets")
+def sample_datasets():
+    return {"datasets": get_sample_datasets()}
+
+
+@app.get("/api/sample-datasets/{dataset_id}")
+def sample_dataset_file(dataset_id: str):
+    path = get_sample_csv_path(dataset_id)
+    if not path or not os.path.isfile(path):
+        raise HTTPException(404, f"Dataset '{dataset_id}' not found.")
+    return FileResponse(
+        path,
+        media_type="text/csv",
+        filename=os.path.basename(path),
+    )
+
+
+@app.get("/api/benchmark")
+def benchmark():
+    return get_benchmark_data()
+
+
+VALID_MODES = ("baseline", "baseline1", "baseline2", "baseline3", "team")
 
 
 @app.post("/ask")
@@ -119,8 +151,8 @@ def ask(
             f"Question must be 1-{config.MAX_QUESTION_CHARS} characters.",
         )
 
-    if mode not in ("baseline", "team"):
-        raise HTTPException(400, "Choose mode 'baseline' or 'team'.")
+    if mode not in VALID_MODES:
+        raise HTTPException(400, "Choose mode 'baseline', 'baseline1', 'baseline2', 'baseline3', or 'team'.")
 
     if not config.GROQ_API_KEY:
         raise HTTPException(
@@ -134,8 +166,10 @@ def ask(
         save_upload(file, path)
 
         try:
-            if mode == "baseline":
-                result = answer_question(path, question)
+            if mode in ("baseline", "baseline1"):
+                result = answer_question(path, question, max_attempts=1)
+            elif mode in ("baseline2", "baseline3"):
+                result = answer_question(path, question, max_attempts=3)
             else:
                 result = analyze(question, path)
         except Exception:
